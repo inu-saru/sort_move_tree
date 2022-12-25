@@ -4,6 +4,7 @@
       :lists="this.lists"
       @onMouseDown="mouseDown"
     />
+    <div ref="draggingGhost" />
   </div>
 </template>
 
@@ -71,6 +72,9 @@ export default {
       placeHolder: {
         element: '',
         isFirst: true
+      },
+      draggingGhost: {
+        element: '',
       }
     }
   },
@@ -78,7 +82,6 @@ export default {
     mouseDown(event){
       this.dragging = true
       this.element = event.target
-      this.element.style.position = "absolute"
       this.pageX = event.pageX
       this.pageY = event.pageY
       this.top = this.element.getBoundingClientRect().top
@@ -92,12 +95,18 @@ export default {
           this.placeHolder.element.classList.add("place-holder")
           this.placeHolder.element.appendChild(document.createTextNode("place-holder"))
           this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling);
+          this.draggingGhost.element = this.element.cloneNode(true)
+          this.element.style.display = "none"
+          this.draggingGhost.element.style.position = "absolute"
+          this.$refs.draggingGhost.appendChild(this.draggingGhost.element)
+          this.draggingGhost.element.style.top = `${this.top}px`
+          this.draggingGhost.element.style.left = `${this.left}px`
           this.placeHolder.isFirst = false;
         }
-        const moveX = event.pageX - this.pageX;
-        const moveY = event.pageY - this.pageY;
-        this.element.style.top = `${this.top + moveY}px`
-        this.element.style.left = `${this.left + moveX}px`
+        const moveX = event.pageX - this.pageX
+        const moveY = event.pageY - this.pageY
+        this.draggingGhost.element.style.top = `${this.top + moveY}px`
+        this.draggingGhost.element.style.left = `${this.left + moveX}px`
       }
     },
     mouseUp() {

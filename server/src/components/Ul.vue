@@ -5,8 +5,16 @@
       :key="index"
       :style="liHierarchy"
     >
-      <a>{{ list.name }}</a>
-      <Ul :lists="list.lists" :hierarchy="sonHierarchy" />
+      <a
+        @mousedown="onMouseDown"
+      >
+        {{ list.name }}
+      </a>
+      <Ul
+        :lists="list.lists"
+        :hierarchy="sonHierarchy"
+        @onMouseDown="onMouseDown"
+      />
     </li>
   </ul>
 </template>
@@ -37,7 +45,12 @@ export default {
     sonHierarchy() {
       return this.hierarchy + 1
     }
-  }
+  },
+  methods: {
+    onMouseDown() {
+      this.$emit("onMouseDown")
+    },
+  },
 }
 </script>
 

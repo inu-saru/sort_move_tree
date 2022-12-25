@@ -1,6 +1,9 @@
 <template>
   <div id="tree">
-    <Ul :lists="this.lists" />
+    <Ul
+      :lists="this.lists"
+      @onMouseDown="mouseDown"
+    />
   </div>
 </template>
 
@@ -61,6 +64,25 @@ export default {
       ],
     }
   },
+  methods:{
+    mouseDown(){
+      console.log('mouseDown')
+    },
+    mouseMove(){
+      console.log('mouseMove')
+    },
+    mouseUp() {
+      console.log('mouseUp')
+    }
+  },
+  mounted() {
+    window.addEventListener('mousemove', this.mouseMove)
+    window.addEventListener('mouseup', this.mouseUp)
+  },
+  beforeunMount(){
+    window.removeEventListener('mousemove', this.mouseMove)
+    window.removeEventListener('mouseup', this.mouseUp)
+  }
 }
 </script>
 

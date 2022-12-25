@@ -62,17 +62,46 @@ export default {
           ]
         },
       ],
+      element: '',
+      dragging: false,
+      pageX:0,
+      pageY:0,
+      top: 0,
+      left: 0,
+      placeHolder: {
+        element: '',
+        isFirst: true
+      }
     }
   },
   methods:{
-    mouseDown(){
-      console.log('mouseDown')
+    mouseDown(event){
+      this.dragging = true
+      this.element = event.target
+      this.element.style.position = "absolute"
+      this.pageX = event.pageX
+      this.pageY = event.pageY
+      this.top = this.element.getBoundingClientRect().top
+      this.left = this.element.getBoundingClientRect().left
+      this.placeHolder.isFirst = true
     },
-    mouseMove(){
-      console.log('mouseMove')
+    mouseMove(event){
+      if(this.dragging){
+        if(this.placeHolder.isFirst){
+          this.placeHolder.element = document.createElement("a")
+          this.placeHolder.element.classList.add("place-holder")
+          this.placeHolder.element.appendChild(document.createTextNode("place-holder"))
+          this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling);
+          this.placeHolder.isFirst = false;
+        }
+        const moveX = event.pageX - this.pageX;
+        const moveY = event.pageY - this.pageY;
+        this.element.style.top = `${this.top + moveY}px`
+        this.element.style.left = `${this.left + moveX}px`
+      }
     },
     mouseUp() {
-      console.log('mouseUp')
+      this.dragging = false
     }
   },
   mounted() {

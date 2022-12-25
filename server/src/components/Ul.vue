@@ -47,8 +47,8 @@ export default {
     }
   },
   methods: {
-    onMouseDown() {
-      this.$emit("onMouseDown")
+    onMouseDown(event) {
+      this.$emit("onMouseDown", event)
     },
   },
 }
@@ -64,6 +64,8 @@ li {
 }
 a {
   height: 32px;
+  width: 400px;
+  background-color: #CCC;
   display: block;
   margin: 0;
   line-height: 32px;

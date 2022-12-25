@@ -110,6 +110,9 @@ export default {
       }
     },
     mouseUp() {
+      this.placeHolder.element.remove()
+      this.draggingGhost.element.remove()
+      this.element.style.display = "block"
       this.dragging = false
     }
   },

@@ -70,6 +70,7 @@ a {
   margin: 0;
   line-height: 32px;
   padding: 0 10px;
+  user-select: none;
 }
 a:hover {
   background-color: #dfdfdf;

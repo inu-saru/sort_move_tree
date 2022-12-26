@@ -17,7 +17,7 @@ export default {
 
 <style>
 .place-holder{
-  color: brown;
+  background-color: bisque;
   display: block;
   height: 32px;
   width: 400px;
@@ -25,5 +25,25 @@ export default {
   margin: 0;
   line-height: 32px;
   padding: 0 10px;
+  user-select: none;
+}
+.place-holder:hover{
+  opacity: 0.7;
+}
+.draggingGhost{
+  width: 420px;
+  background-color: #CCC;
+  line-height: 32px;
+  padding: 0;
+  user-select: none;
+  list-style: none;
+  opacity: 0.7;
+}
+.draggingGhost:before {
+	content: "▶︎";
+	color: #000000;
+	padding-right: 3px;
+	line-height: 32px;
+  margin-left: 10px;
 }
 </style>

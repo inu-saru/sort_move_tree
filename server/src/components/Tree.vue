@@ -93,9 +93,10 @@ export default {
         if(this.placeHolder.isFirst){
           this.placeHolder.element = document.createElement("a")
           this.placeHolder.element.classList.add("place-holder")
-          this.placeHolder.element.appendChild(document.createTextNode("place-holder"))
-          this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling);
-          this.draggingGhost.element = this.element.cloneNode(true)
+          this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
+          this.draggingGhost.element = document.createElement("li")
+          this.draggingGhost.element.classList.add("draggingGhost")
+          this.draggingGhost.element.appendChild(document.createTextNode(this.element.children[0].textContent))
           this.element.style.display = "none"
           this.draggingGhost.element.style.position = "absolute"
           this.$refs.draggingGhost.appendChild(this.draggingGhost.element)

@@ -4,10 +4,9 @@
       v-for="(list,index) in this.lists" 
       :key="index"
       :style="liHierarchy"
+      @mousedown="onMouseDown"
     >
-      <a
-        @mousedown="onMouseDown"
-      >
+      <a>
         {{ list.name }}
       </a>
       <Ul
@@ -61,24 +60,21 @@ ul {
 }
 li {
   text-indent: var(--text-indent);
-}
-a {
-  height: 32px;
-  width: 400px;
+  width: 420px;
   background-color: #CCC;
-  display: block;
-  margin: 0;
   line-height: 32px;
-  padding: 0 10px;
+  padding: 0;
   user-select: none;
 }
-a:hover {
-  background-color: #dfdfdf;
+a {
+  pointer-events: none;
+  user-select: none;
 }
 a:before {
 	content: "▶︎";
 	color: #000000;
 	padding-right: 3px;
 	line-height: 32px;
+  margin-left: 10px;
 }
 </style>

@@ -91,17 +91,9 @@ export default {
     mouseMove(event){
       if(this.dragging){
         if(this.placeHolder.isFirst){
-          this.placeHolder.element = document.createElement("a")
-          this.placeHolder.element.classList.add("place-holder")
-          this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
-          this.draggingGhost.element = document.createElement("li")
-          this.draggingGhost.element.classList.add("draggingGhost")
-          this.draggingGhost.element.appendChild(document.createTextNode(this.element.children[0].textContent))
+          this.createPlaceHolder()
+          this.createDraggingGhost()
           this.element.style.display = "none"
-          this.draggingGhost.element.style.position = "absolute"
-          this.$refs.draggingGhost.appendChild(this.draggingGhost.element)
-          this.draggingGhost.element.style.top = `${this.top}px`
-          this.draggingGhost.element.style.left = `${this.left}px`
           this.placeHolder.isFirst = false;
         }
         const moveX = event.pageX - this.pageX
@@ -109,6 +101,20 @@ export default {
         this.draggingGhost.element.style.top = `${this.top + moveY}px`
         this.draggingGhost.element.style.left = `${this.left + moveX}px`
       }
+    },
+    createPlaceHolder() {
+      this.placeHolder.element = document.createElement("a")
+      this.placeHolder.element.classList.add("place-holder")
+      this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
+    },
+    createDraggingGhost() {
+      this.draggingGhost.element = document.createElement("li")
+      this.draggingGhost.element.classList.add("draggingGhost")
+      this.draggingGhost.element.appendChild(document.createTextNode(this.element.children[0].textContent))
+      this.draggingGhost.element.style.position = "absolute"
+      this.$refs.draggingGhost.appendChild(this.draggingGhost.element)
+      this.draggingGhost.element.style.top = `${this.top}px`
+      this.draggingGhost.element.style.left = `${this.left}px`
     },
     mouseUp() {
       this.placeHolder.element.remove()

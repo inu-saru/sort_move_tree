@@ -96,10 +96,7 @@ export default {
           this.element.style.display = "none"
           this.placeHolder.isFirst = false;
         }
-        const moveX = event.pageX - this.pageX
-        const moveY = event.pageY - this.pageY
-        this.draggingGhost.element.style.top = `${this.top + moveY}px`
-        this.draggingGhost.element.style.left = `${this.left + moveX}px`
+        this.moveDraggingGhost(event)
       }
     },
     createPlaceHolder() {
@@ -115,6 +112,12 @@ export default {
       this.$refs.draggingGhost.appendChild(this.draggingGhost.element)
       this.draggingGhost.element.style.top = `${this.top}px`
       this.draggingGhost.element.style.left = `${this.left}px`
+    },
+    moveDraggingGhost(event) {
+      const moveX = event.pageX - this.pageX
+      const moveY = event.pageY - this.pageY
+      this.draggingGhost.element.style.top = `${this.top + moveY}px`
+      this.draggingGhost.element.style.left = `${this.left + moveX}px`
     },
     mouseUp() {
       this.placeHolder.element.remove()

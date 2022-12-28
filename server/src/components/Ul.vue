@@ -6,7 +6,7 @@
       :style="liHierarchy"
       @mousedown="onMouseDown"
     >
-      <a>
+      <a class="nodeLabel">
         {{ list.name }}
       </a>
       <Ul
@@ -69,6 +69,8 @@ li {
 a {
   pointer-events: none;
   user-select: none;
+  display: block;
+  box-sizing:border-box;
 }
 a:before {
 	content: "▶︎";

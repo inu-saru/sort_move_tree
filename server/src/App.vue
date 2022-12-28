@@ -46,4 +46,11 @@ export default {
 	line-height: 32px;
   margin-left: 10px;
 }
+.hovered {
+  background-color: rgb(208, 252, 237);
+}
+.hoveredWithDrag {
+  background-color:skyblue;
+  border: 1px solid blue;
+}
 </style>

@@ -87,6 +87,9 @@ export default {
       },
       draggingGhost: {
         element: '',
+      },
+      hovered: {
+        element: null,
       }
     }
   },
@@ -109,6 +112,24 @@ export default {
           this.placeHolder.isFirst = false;
         }
         this.moveDraggingGhost(event)
+      }
+      
+      // hover
+      const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
+      const hoveredNodeLabel = nodeLabels.find((nodeLabel) => {
+        const nodeLabelLocation = nodeLabel.getBoundingClientRect()
+        return nodeLabelLocation.top < event.pageY && event.pageY < (nodeLabelLocation.top + nodeLabelLocation.height) 
+      })
+      if(this.hovered.element) {
+        this.hovered.element.classList.remove("hovered", "hoveredWithDrag")
+      }
+      if(hoveredNodeLabel) {     
+        if(this.dragging) {
+          hoveredNodeLabel.classList.add("hoveredWithDrag")
+        } else {
+          hoveredNodeLabel.classList.add("hovered")
+        }
+        this.hovered.element = hoveredNodeLabel
       }
     },
     createPlaceHolder() {

@@ -118,12 +118,12 @@ export default {
       const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
       const hoveredNodeLabel = nodeLabels.find((nodeLabel) => {
         const nodeLabelLocation = nodeLabel.getBoundingClientRect()
-        return nodeLabelLocation.top < event.pageY && event.pageY < (nodeLabelLocation.top + nodeLabelLocation.height) 
+        return nodeLabelLocation.top <= event.pageY && event.pageY <= nodeLabelLocation.bottom
       })
       if(this.hovered.element) {
         this.hovered.element.classList.remove("hovered", "hoveredWithDrag")
       }
-      if(hoveredNodeLabel) {     
+      if(hoveredNodeLabel && this.isInsindeTree(event)){
         if(this.dragging) {
           hoveredNodeLabel.classList.add("hoveredWithDrag")
         } else {
@@ -151,6 +151,10 @@ export default {
       const moveY = event.pageY - this.pageY
       this.draggingGhost.element.style.top = `${this.top + moveY}px`
       this.draggingGhost.element.style.left = `${this.left + moveX}px`
+    },
+    isInsindeTree(event) {
+      const treeLocation = document.getElementById('tree').getBoundingClientRect()
+      return (treeLocation.top <= event.pageY && event.pageY <= treeLocation.bottom) && (treeLocation.left <= event.pageX && event.pageX <= treeLocation.right)
     },
     mouseUp() {
       this.placeHolder.element.remove()

@@ -113,24 +113,7 @@ export default {
         }
         this.moveDraggingGhost(event)
       }
-      
-      // hover
-      const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
-      const hoveredNodeLabel = nodeLabels.find((nodeLabel) => {
-        const nodeLabelLocation = nodeLabel.getBoundingClientRect()
-        return nodeLabelLocation.top <= event.pageY && event.pageY <= nodeLabelLocation.bottom
-      })
-      if(this.hovered.element) {
-        this.hovered.element.classList.remove("hovered", "hoveredWithDrag")
-      }
-      if(hoveredNodeLabel && this.isInsindeTree(event)){
-        if(this.dragging) {
-          hoveredNodeLabel.classList.add("hoveredWithDrag")
-        } else {
-          hoveredNodeLabel.classList.add("hovered")
-        }
-        this.hovered.element = hoveredNodeLabel
-      }
+      this.hoveringOnTree(event)
     },
     createPlaceHolder() {
       this.placeHolder.element = document.createElement("a")
@@ -151,6 +134,24 @@ export default {
       const moveY = event.pageY - this.pageY
       this.draggingGhost.element.style.top = `${this.top + moveY}px`
       this.draggingGhost.element.style.left = `${this.left + moveX}px`
+    },
+    hoveringOnTree(event){
+      const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
+      const hoveredNodeLabel = nodeLabels.find((nodeLabel) => {
+        const nodeLabelLocation = nodeLabel.getBoundingClientRect()
+        return nodeLabelLocation.top <= event.pageY && event.pageY <= nodeLabelLocation.bottom
+      })
+      if(this.hovered.element) {
+        this.hovered.element.classList.remove("hovered", "hoveredWithDrag")
+      }
+      if(hoveredNodeLabel && this.isInsindeTree(event)){
+        if(this.dragging) {
+          hoveredNodeLabel.classList.add("hoveredWithDrag")
+        } else {
+          hoveredNodeLabel.classList.add("hovered")
+        }
+        this.hovered.element = hoveredNodeLabel
+      }
     },
     isInsindeTree(event) {
       const treeLocation = document.getElementById('tree').getBoundingClientRect()

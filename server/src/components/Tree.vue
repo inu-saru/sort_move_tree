@@ -114,6 +114,25 @@ export default {
         this.moveDraggingGhost(event)
       }
       this.hoveringOnTree(event)
+      // onTreeChild
+      const treeChildren = Array.from(document.querySelectorAll('.treeChild'))
+      const targetTreeChild = treeChildren.reduce((shallowestTreeChild, treeChild) => {
+        const treeChildLocation = treeChild.getBoundingClientRect()
+        const depth = treeChildLocation.height
+        if(shallowestTreeChild){
+          if((treeChildLocation.top <= event.pageY && event.pageY <= treeChildLocation.bottom) && depth < shallowestTreeChild.depth ) {
+            return {
+              depth: depth,
+              element: treeChild
+            } 
+          } else {
+            return shallowestTreeChild
+          }
+        } else {
+          return treeChild
+        }
+      }, { depth: Number.POSITIVE_INFINITY }).element
+
       // sort
       const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
       if(sortableNodes && this.dragging) {

@@ -11,6 +11,7 @@
         {{ list.name }}
       </a>
       <Ul
+        v-if="list.lists && list.lists.length"
         :lists="list.lists"
         :hierarchy="sonHierarchy"
         @onMouseDown="onMouseDown"

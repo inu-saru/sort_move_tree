@@ -51,6 +51,7 @@ export default {
 }
 .hoveredWithDrag {
   background-color:skyblue;
-  border: 1px solid blue;
+  border: 2px solid blue;
+  height: 32px;
 }
 </style>

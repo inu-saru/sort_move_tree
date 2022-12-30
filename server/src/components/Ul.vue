@@ -1,10 +1,11 @@
 <template>
-  <ul>
+  <ul class="treeChild">
     <li
       v-for="(list,index) in this.lists" 
       :key="index"
       :style="liHierarchy"
       @mousedown="onMouseDown"
+      class="node"
     >
       <a class="nodeLabel">
         {{ list.name }}

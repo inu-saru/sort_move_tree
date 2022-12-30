@@ -114,6 +114,33 @@ export default {
         this.moveDraggingGhost(event)
       }
       this.hoveringOnTree(event)
+      // sort
+      const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
+      if(sortableNodes && this.dragging) {
+        const targetNode = sortableNodes.reduce((closestNode, sortableNode) => {
+          const nodeLocation = sortableNode.getBoundingClientRect()
+          const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+          const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+          if(offsetY < 0 && offsetY > closestNode.offsetY) {
+            return {
+              offsetY: offsetY,
+              element: sortableNode
+            }
+          } else {
+            return closestNode
+          }
+        }, { offsetY: Number.NEGATIVE_INFINITY }).element
+
+        this.placeHolder.element.remove()
+        this.placeHolder.element = document.createElement("li")
+        this.placeHolder.element.classList.add("place-holder")
+        if (targetNode == undefined) {
+          const rootTree = document.getElementById('tree').querySelector('ul')
+          rootTree.appendChild(this.placeHolder.element)
+        } else {
+          targetNode.parentNode.insertBefore(this.placeHolder.element, targetNode)
+        }
+      }
     },
     createPlaceHolder() {
       this.placeHolder.element = document.createElement("a")

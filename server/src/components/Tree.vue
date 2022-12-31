@@ -92,6 +92,8 @@ export default {
         element: null,
       },
       targetTreeChild: null,
+      targetNode: null,
+      aboveNode: null,
     }
   },
   methods:{
@@ -118,7 +120,7 @@ export default {
 
       // sort
       const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
-      if(sortableNodes && this.dragging) {
+      if(sortableNodes && this.dragging && this.targetTreeChild) {
         const targetNode = sortableNodes.reduce((closestNode, sortableNode) => {
           const nodeLocation = sortableNode.getBoundingClientRect()
           const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
@@ -132,6 +134,22 @@ export default {
             return closestNode
           }
         }, { offsetY: Number.NEGATIVE_INFINITY }).element
+        this.targetNode = targetNode
+
+        const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
+          const nodeLocation = sortableNode.getBoundingClientRect()
+          const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+          const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+          if(offsetY > 0 && offsetY < closestNode.offsetY) {
+            return {
+              offsetY: offsetY,
+              element: sortableNode
+            }
+          } else {
+            return closestNode
+          }
+        }, { offsetY: Number.POSITIVE_INFINITY }).element
+        this.aboveNode = aboveNode
 
         this.placeHolder.element.remove()
         this.placeHolder.element = document.createElement("li")
@@ -140,6 +158,9 @@ export default {
         if (targetNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
           rootTree.appendChild(this.placeHolder.element)
+        } else if(this.aboveNode.dataset.hierarchy > this.targetNode.dataset.hierarchy && this.targetNode.parentNode != this.targetTreeChild){
+          this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
+          this.targetTreeChild.appendChild(this.placeHolder.element)
         } else {
           this.placeHolder.element.style.textIndent = (targetNode.dataset.hierarchy * 16) + "px"
           targetNode.parentNode.insertBefore(this.placeHolder.element, targetNode)

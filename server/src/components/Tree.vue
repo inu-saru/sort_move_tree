@@ -136,17 +136,20 @@ export default {
         this.placeHolder.element.remove()
         this.placeHolder.element = document.createElement("li")
         this.placeHolder.element.classList.add("place-holder")
+        this.placeHolder.element.textContent = "▶︎"
         if (targetNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
           rootTree.appendChild(this.placeHolder.element)
         } else {
+          this.placeHolder.element.style.textIndent = (targetNode.dataset.hierarchy * 16) + "px"
           targetNode.parentNode.insertBefore(this.placeHolder.element, targetNode)
         }
       }
     },
     createPlaceHolder() {
-      this.placeHolder.element = document.createElement("a")
+      this.placeHolder.element = document.createElement("li")
       this.placeHolder.element.classList.add("place-holder")
+      this.placeHolder.element.appendChild(document.createTextNode("▶︎"))
       this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
     },
     createDraggingGhost() {

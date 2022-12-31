@@ -4,6 +4,7 @@
       v-for="(list,index) in this.lists" 
       :key="index"
       :style="liHierarchy"
+      :data-hierarchy="hierarchy"
       @mousedown="onMouseDown"
       class="node"
     >

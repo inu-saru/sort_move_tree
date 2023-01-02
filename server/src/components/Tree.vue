@@ -158,7 +158,7 @@ export default {
         if (belowNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
           rootTree.appendChild(this.placeHolder.element)
-        } else if(this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
+        } else if(this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
           this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
           this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
         } else {

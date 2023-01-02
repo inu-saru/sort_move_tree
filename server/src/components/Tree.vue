@@ -92,7 +92,7 @@ export default {
         element: null,
       },
       targetTreeChild: null,
-      targetNode: null,
+      belowNode: null,
       aboveNode: null,
     }
   },
@@ -121,7 +121,7 @@ export default {
       // sort
       const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
       if(sortableNodes && this.dragging && this.targetTreeChild) {
-        const targetNode = sortableNodes.reduce((closestNode, sortableNode) => {
+        const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
           const nodeLocation = sortableNode.getBoundingClientRect()
           const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
           const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
@@ -134,7 +134,7 @@ export default {
             return closestNode
           }
         }, { offsetY: Number.NEGATIVE_INFINITY }).element
-        this.targetNode = targetNode
+        this.belowNode = belowNode
 
         const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
           const nodeLocation = sortableNode.getBoundingClientRect()
@@ -155,15 +155,15 @@ export default {
         this.placeHolder.element = document.createElement("li")
         this.placeHolder.element.classList.add("place-holder")
         this.placeHolder.element.textContent = "▶︎"
-        if (targetNode == undefined) {
+        if (belowNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
           rootTree.appendChild(this.placeHolder.element)
-        } else if(this.aboveNode.dataset.hierarchy > this.targetNode.dataset.hierarchy && this.targetNode.parentNode != this.targetTreeChild){
+        } else if(this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.targetTreeChild){
           this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
           this.targetTreeChild.appendChild(this.placeHolder.element)
         } else {
-          this.placeHolder.element.style.textIndent = (targetNode.dataset.hierarchy * 16) + "px"
-          targetNode.parentNode.insertBefore(this.placeHolder.element, targetNode)
+          this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
+          belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
         }
       }
     },

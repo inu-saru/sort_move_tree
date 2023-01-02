@@ -83,7 +83,8 @@ export default {
       left: 0,
       placeHolder: {
         element: '',
-        isFirst: true
+        isFirst: true,
+        height: 32
       },
       draggingGhost: {
         element: '',
@@ -157,7 +158,13 @@ export default {
         this.placeHolder.element.textContent = "▶︎"
         if (belowNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
-          rootTree.appendChild(this.placeHolder.element)
+          const rootTreeLocation = rootTree.getBoundingClientRect()
+          if (event.pageY > rootTreeLocation.bottom + this.placeHolder.height) {
+            rootTree.appendChild(this.placeHolder.element)
+          } else {
+            this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
+            this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
+          }
         } else if(this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
           this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
           this.lastHoveredTreeChild.appendChild(this.placeHolder.element)

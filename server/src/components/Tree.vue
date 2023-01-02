@@ -91,7 +91,7 @@ export default {
       hovered: {
         element: null,
       },
-      targetTreeChild: null,
+      lastHoveredTreeChild: null,
       belowNode: null,
       aboveNode: null,
     }
@@ -120,7 +120,7 @@ export default {
 
       // sort
       const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
-      if(sortableNodes && this.dragging && this.targetTreeChild) {
+      if(sortableNodes && this.dragging && this.lastHoveredTreeChild) {
         const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
           const nodeLocation = sortableNode.getBoundingClientRect()
           const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
@@ -158,9 +158,9 @@ export default {
         if (belowNode == undefined) {
           const rootTree = document.getElementById('tree').querySelector('ul')
           rootTree.appendChild(this.placeHolder.element)
-        } else if(this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.targetTreeChild){
+        } else if(this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
           this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
-          this.targetTreeChild.appendChild(this.placeHolder.element)
+          this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
         } else {
           this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
           belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
@@ -200,7 +200,7 @@ export default {
       if(hoveredNodeLabel && this.isInsindeTree(event)){
         if(this.dragging) {
           hoveredNodeLabel.classList.add("hoveredWithDrag")
-          this.setTargetTreeChild(event) 
+          this.setLastHoveredTreeChild(event) 
         } else {
           hoveredNodeLabel.classList.add("hovered")
         }
@@ -211,9 +211,9 @@ export default {
       const treeLocation = document.getElementById('tree').getBoundingClientRect()
       return (treeLocation.top <= event.pageY && event.pageY <= treeLocation.bottom) && (treeLocation.left <= event.pageX && event.pageX <= treeLocation.right)
     },
-    setTargetTreeChild(event) {
+    setLastHoveredTreeChild(event) {
       const treeChildren = Array.from(document.querySelectorAll('.treeChild'))
-      const targetTreeChild = treeChildren.reduce((shallowestTreeChild, treeChild) => {
+      const lastHoveredTreeChild = treeChildren.reduce((shallowestTreeChild, treeChild) => {
         const treeChildLocation = treeChild.getBoundingClientRect()
         const depth = treeChildLocation.height
         if(shallowestTreeChild){
@@ -229,14 +229,14 @@ export default {
           return treeChild
         }
       }, { depth: Number.POSITIVE_INFINITY }).element
-      this.targetTreeChild = targetTreeChild
+      this.lastHoveredTreeChild = lastHoveredTreeChild
     },
     mouseUp() {
       this.placeHolder.element.remove()
       this.draggingGhost.element.remove()
       this.element.style.display = "block"
       this.dragging = false
-      this.targetTreeChild = null
+      this.lastHoveredTreeChild = null
     }
   },
   mounted() {

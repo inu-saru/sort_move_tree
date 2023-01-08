@@ -11,4 +11,4 @@ services:
     tty: true
     stdin_open: true
     privileged: true
-    command: sh -c "npm run dev"
+    command: sh -c "yarn install && yarn run dev"

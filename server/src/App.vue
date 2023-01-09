@@ -17,7 +17,6 @@ export default {
 
 <style>
 .place-holder{
-  background-color: bisque;
   display: block;
   height: 32px;
   width: 400px;
@@ -26,9 +25,11 @@ export default {
   line-height: 32px;
   padding: 0 10px;
   user-select: none;
+  opacity: 0.5;
 }
-.place-holder:hover{
-  opacity: 0.7;
+.hoveredPlaceHolder{
+  background-color: bisque !important;
+  opacity: 1;
 }
 .draggingGhost{
   width: 420px;

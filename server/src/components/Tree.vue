@@ -171,6 +171,9 @@ export default {
         } else {
           this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
           belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
+        }        
+        if(this.isInsideElement(this.placeHolder.element, event)){
+          this.placeHolder.element.classList.add("hoveredPlaceHolder")
         }
       }
     },
@@ -178,6 +181,7 @@ export default {
       this.placeHolder.element = document.createElement("li")
       this.placeHolder.element.classList.add("place-holder")
       this.placeHolder.element.appendChild(document.createTextNode("▶︎"))
+      this.placeHolder.element.style.textIndent = (this.element.dataset.hierarchy * 16) + "px"
       this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
     },
     createDraggingGhost() {
@@ -217,6 +221,10 @@ export default {
     isInsindeTree(event) {
       const treeLocation = document.getElementById('tree').getBoundingClientRect()
       return (treeLocation.top <= event.pageY && event.pageY <= treeLocation.bottom) && (treeLocation.left <= event.pageX && event.pageX <= treeLocation.right)
+    },
+    isInsideElement(element, event) {
+      const elementLocation = element.getBoundingClientRect()
+      return (elementLocation.top <= event.pageY && event.pageY <= elementLocation.bottom) && (elementLocation.left <= event.pageX && event.pageX <= elementLocation.right)
     },
     setLastHoveredTreeChild(event) {
       const treeChildren = Array.from(document.querySelectorAll('.treeChild'))

@@ -238,7 +238,7 @@ export default {
         } else {
           return treeChild
         }
-      }, { depth: Number.POSITIVE_INFINITY }).element
+      }, { depth: Number.POSITIVE_INFINITY, element: treeChildren[0] }).element
       this.hoveredTreeChild = hoveredTreeChild
     },
     mouseUp() {

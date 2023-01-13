@@ -1,5 +1,5 @@
 <template>
-  <ul class="treeChild">
+  <ul class="treeChild" :data-hierarchy="hierarchy">
     <li
       v-for="(list,index) in this.lists" 
       :key="index"

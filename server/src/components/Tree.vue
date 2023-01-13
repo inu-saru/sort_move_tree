@@ -159,17 +159,8 @@ export default {
           this.placeHolder.element = document.createElement("li")
           this.placeHolder.element.classList.add("place-holder")
           this.placeHolder.element.textContent = "▶︎"
-          if (belowNode == undefined) {
-            const rootTree = document.getElementById('tree').querySelector('ul')
-            const rootTreeLocation = rootTree.getBoundingClientRect()
-            if (event.pageY > rootTreeLocation.bottom + this.placeHolder.height) {
-              rootTree.appendChild(this.placeHolder.element)
-            } else {
-              this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
-              this.hoveredTreeChild.appendChild(this.placeHolder.element)
-            }
-          } else if(this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.hoveredTreeChild){
-            this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
+          if (belowNode == undefined || this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.hoveredTreeChild) {
+            this.placeHolder.element.style.textIndent = (this.hoveredTreeChild.dataset.hierarchy * 16) + "px"
             this.hoveredTreeChild.appendChild(this.placeHolder.element)
           } else {
             this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"

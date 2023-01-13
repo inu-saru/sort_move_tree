@@ -222,7 +222,7 @@ export default {
       return (elementLocation.top <= event.pageY && event.pageY <= elementLocation.bottom) && (elementLocation.left <= event.pageX && event.pageX <= elementLocation.right)
     },
     setHoveredTreeChild(event) {
-      const treeChildren = Array.from(document.querySelectorAll('.treeChild'))
+      const treeChildren = Array.from(document.querySelectorAll('.treeChild')).filter(treeChild => treeChild.getBoundingClientRect().height > 0)
       const hoveredTreeChild = treeChildren.reduce((shallowestTreeChild, treeChild) => {
         const treeChildLocation = treeChild.getBoundingClientRect()
         const depth = treeChildLocation.height

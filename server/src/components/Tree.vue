@@ -77,6 +77,7 @@ export default {
       ],
       element: '',
       dragging: false,
+      isDraggedOverOriginalLocation: false,
       pageX:0,
       pageY:0,
       top: 0,
@@ -116,64 +117,67 @@ export default {
           this.placeHolder.isFirst = false;
         }
         this.moveDraggingGhost(event)
+        this.setLastHoveredTreeChild(event) 
       }
       this.hoveringOnTree(event)      
 
       // sort
-      const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
-      if(sortableNodes && this.dragging && this.lastHoveredTreeChild) {
-        const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
-          const nodeLocation = sortableNode.getBoundingClientRect()
-          const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
-          const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
-          if(offsetY < 0 && offsetY > closestNode.offsetY) {
-            return {
-              offsetY: offsetY,
-              element: sortableNode
+      if(this.isDraggedOverOriginalLocation) {
+        const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
+        if(sortableNodes && this.dragging && this.lastHoveredTreeChild) {
+          const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
+            const nodeLocation = sortableNode.getBoundingClientRect()
+            const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+            const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+            if(offsetY < 0 && offsetY > closestNode.offsetY) {
+              return {
+                offsetY: offsetY,
+                element: sortableNode
+              }
+            } else {
+              return closestNode
             }
-          } else {
-            return closestNode
-          }
-        }, { offsetY: Number.NEGATIVE_INFINITY }).element
-        this.belowNode = belowNode
+          }, { offsetY: Number.NEGATIVE_INFINITY }).element
+          this.belowNode = belowNode
 
-        const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
-          const nodeLocation = sortableNode.getBoundingClientRect()
-          const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
-          const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
-          if(offsetY > 0 && offsetY < closestNode.offsetY) {
-            return {
-              offsetY: offsetY,
-              element: sortableNode
+          const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
+            const nodeLocation = sortableNode.getBoundingClientRect()
+            const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+            const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+            if(offsetY > 0 && offsetY < closestNode.offsetY) {
+              return {
+                offsetY: offsetY,
+                element: sortableNode
+              }
+            } else {
+              return closestNode
             }
-          } else {
-            return closestNode
-          }
-        }, { offsetY: Number.POSITIVE_INFINITY }).element
-        this.aboveNode = aboveNode
+          }, { offsetY: Number.POSITIVE_INFINITY }).element
+          this.aboveNode = aboveNode
 
-        this.placeHolder.element.remove()
-        this.placeHolder.element = document.createElement("li")
-        this.placeHolder.element.classList.add("place-holder")
-        this.placeHolder.element.textContent = "▶︎"
-        if (belowNode == undefined) {
-          const rootTree = document.getElementById('tree').querySelector('ul')
-          const rootTreeLocation = rootTree.getBoundingClientRect()
-          if (event.pageY > rootTreeLocation.bottom + this.placeHolder.height) {
-            rootTree.appendChild(this.placeHolder.element)
-          } else {
+          this.placeHolder.element.remove()
+          this.placeHolder.element = document.createElement("li")
+          this.placeHolder.element.classList.add("place-holder")
+          this.placeHolder.element.textContent = "▶︎"
+          if (belowNode == undefined) {
+            const rootTree = document.getElementById('tree').querySelector('ul')
+            const rootTreeLocation = rootTree.getBoundingClientRect()
+            if (event.pageY > rootTreeLocation.bottom + this.placeHolder.height) {
+              rootTree.appendChild(this.placeHolder.element)
+            } else {
+              this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
+              this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
+            }
+          } else if(this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
             this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
             this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
+          } else {
+            this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
+            belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
+          }        
+          if(this.isInsideElement(this.placeHolder.element, event)){
+            this.placeHolder.element.classList.add("hoveredPlaceHolder")
           }
-        } else if(this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.lastHoveredTreeChild){
-          this.placeHolder.element.style.textIndent = (this.aboveNode.dataset.hierarchy * 16) + "px"
-          this.lastHoveredTreeChild.appendChild(this.placeHolder.element)
-        } else {
-          this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
-          belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
-        }        
-        if(this.isInsideElement(this.placeHolder.element, event)){
-          this.placeHolder.element.classList.add("hoveredPlaceHolder")
         }
       }
     },
@@ -211,7 +215,7 @@ export default {
       if(hoveredNodeLabel && this.isInsindeTree(event)){
         if(this.dragging) {
           hoveredNodeLabel.classList.add("hoveredWithDrag")
-          this.setLastHoveredTreeChild(event) 
+          this.isDraggedOverOriginalLocation = true
         } else {
           hoveredNodeLabel.classList.add("hovered")
         }
@@ -251,6 +255,7 @@ export default {
       this.draggingGhost.element.remove()
       this.element.style.display = "block"
       this.dragging = false
+      this.isDraggedOverOriginalLocation = false
       this.lastHoveredTreeChild = null
     }
   },

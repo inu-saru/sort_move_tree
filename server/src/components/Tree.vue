@@ -151,7 +151,7 @@ export default {
             const nodeLocation = sortableNode.getBoundingClientRect()
             const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
             const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
-            if(offsetY > 0 && offsetY < closestNode.offsetY) {
+            if(offsetY >= 0 && offsetY < closestNode.offsetY) {
               return {
                 offsetY: offsetY,
                 element: sortableNode

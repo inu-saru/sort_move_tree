@@ -205,7 +205,7 @@ export default {
       const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
       const hoveredNodeLabel = nodeLabels.find((nodeLabel) => {
         const nodeLabelLocation = nodeLabel.getBoundingClientRect()
-        return nodeLabelLocation.top <= event.pageY && event.pageY <= nodeLabelLocation.bottom
+        return nodeLabelLocation.top < event.pageY && event.pageY < nodeLabelLocation.bottom
       })
       if(this.hovered.element) {
         this.hovered.element.classList.remove("hovered", "hoveredWithDrag")

@@ -75,37 +75,44 @@ export default {
           ]
         },
       ],
-      element: '',
       dragging: false,
       isDraggedOverOriginalLocation: false,
-      pageX:0,
-      pageY:0,
-      top: 0,
-      left: 0,
+      dragged: {
+        element: null,
+        pageX:0,
+        pageY:0,
+        top: 0,
+        left: 0,
+      },
       placeHolder: {
-        element: '',
+        element: null,
         isFirst: true,
-        height: 32
       },
       draggingGhost: {
-        element: '',
+        element: null,
       },
       hovered: {
         element: null,
       },
-      hoveredTreeChild: null,
-      belowNode: null,
-      aboveNode: null,
+      hoveredTreeChild: {
+        element: null,
+      },
+      belowNode: {
+        element: null,
+      },
+      aboveNode: {
+        element: null,
+      }
     }
   },
   methods:{
     mouseDown(event){
       this.dragging = true
-      this.element = event.target
-      this.pageX = event.pageX
-      this.pageY = event.pageY
-      this.top = this.element.getBoundingClientRect().top
-      this.left = this.element.getBoundingClientRect().left
+      this.dragged.element = event.target
+      this.dragged.pageX = event.pageX
+      this.dragged.pageY = event.pageY
+      this.dragged.top = this.dragged.element.getBoundingClientRect().top
+      this.dragged.left = this.dragged.element.getBoundingClientRect().left
       this.placeHolder.isFirst = true
     },
     mouseMove(event){
@@ -113,7 +120,7 @@ export default {
         if(this.placeHolder.isFirst){
           this.createPlaceHolder()
           this.createDraggingGhost()
-          this.element.style.display = "none"
+          this.dragged.element.style.display = "none"
           this.placeHolder.isFirst = false;
         }
         this.moveDraggingGhost(event)
@@ -124,7 +131,7 @@ export default {
       // sort
       if(this.isDraggedOverOriginalLocation) {
         const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
-        if(sortableNodes && this.dragging && this.hoveredTreeChild) {
+        if(sortableNodes && this.dragging && this.hoveredTreeChild.element) {
           const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
             const nodeLocation = sortableNode.getBoundingClientRect()
             const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
@@ -138,7 +145,7 @@ export default {
               return closestNode
             }
           }, { offsetY: Number.NEGATIVE_INFINITY }).element
-          this.belowNode = belowNode
+          this.belowNode.element = belowNode
 
           const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
             const nodeLocation = sortableNode.getBoundingClientRect()
@@ -153,15 +160,15 @@ export default {
               return closestNode
             }
           }, { offsetY: Number.POSITIVE_INFINITY }).element
-          this.aboveNode = aboveNode
+          this.aboveNode.element = aboveNode
 
           this.placeHolder.element.remove()
           this.placeHolder.element = document.createElement("li")
           this.placeHolder.element.classList.add("place-holder")
           this.placeHolder.element.textContent = "▶︎"
-          if (belowNode == undefined || this.aboveNode && this.belowNode && this.aboveNode.dataset.hierarchy > this.belowNode.dataset.hierarchy && this.belowNode.parentNode != this.hoveredTreeChild) {
-            this.placeHolder.element.style.textIndent = (this.hoveredTreeChild.dataset.hierarchy * 16) + "px"
-            this.hoveredTreeChild.appendChild(this.placeHolder.element)
+          if (belowNode == undefined || this.aboveNode.element && this.belowNode.element && this.aboveNode.element.dataset.hierarchy > this.belowNode.element.dataset.hierarchy && this.belowNode.element.parentNode != this.hoveredTreeChild.element) {
+            this.placeHolder.element.style.textIndent = (this.hoveredTreeChild.element.dataset.hierarchy * 16) + "px"
+            this.hoveredTreeChild.element.appendChild(this.placeHolder.element)
           } else {
             this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
             belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
@@ -176,23 +183,23 @@ export default {
       this.placeHolder.element = document.createElement("li")
       this.placeHolder.element.classList.add("place-holder")
       this.placeHolder.element.appendChild(document.createTextNode("▶︎"))
-      this.placeHolder.element.style.textIndent = (this.element.dataset.hierarchy * 16) + "px"
-      this.element.parentNode.insertBefore(this.placeHolder.element, this.element.nextSibling)
+      this.placeHolder.element.style.textIndent = (this.dragged.element.dataset.hierarchy * 16) + "px"
+      this.dragged.element.parentNode.insertBefore(this.placeHolder.element, this.dragged.element.nextSibling)
     },
     createDraggingGhost() {
       this.draggingGhost.element = document.createElement("li")
       this.draggingGhost.element.classList.add("draggingGhost")
-      this.draggingGhost.element.appendChild(document.createTextNode(this.element.children[0].textContent))
+      this.draggingGhost.element.appendChild(document.createTextNode(this.dragged.element.children[0].textContent))
       this.draggingGhost.element.style.position = "absolute"
       this.$refs.draggingGhost.appendChild(this.draggingGhost.element)
-      this.draggingGhost.element.style.top = `${this.top}px`
-      this.draggingGhost.element.style.left = `${this.left}px`
+      this.draggingGhost.element.style.top = `${this.dragged.top}px`
+      this.draggingGhost.element.style.left = `${this.dragged.left}px`
     },
     moveDraggingGhost(event) {
-      const moveX = event.pageX - this.pageX
-      const moveY = event.pageY - this.pageY
-      this.draggingGhost.element.style.top = `${this.top + moveY}px`
-      this.draggingGhost.element.style.left = `${this.left + moveX}px`
+      const moveX = event.pageX - this.dragged.pageX
+      const moveY = event.pageY - this.dragged.pageY
+      this.draggingGhost.element.style.top = `${this.dragged.top + moveY}px`
+      this.draggingGhost.element.style.left = `${this.dragged.left + moveX}px`
     },
     hoveringOnTree(event){
       const nodeLabels = Array.from(document.querySelectorAll('.nodeLabel'))
@@ -239,15 +246,15 @@ export default {
           return treeChild
         }
       }, { depth: Number.POSITIVE_INFINITY, element: treeChildren[0] }).element
-      this.hoveredTreeChild = hoveredTreeChild
+      this.hoveredTreeChild.element = hoveredTreeChild
     },
     mouseUp() {
       this.placeHolder.element.remove()
       this.draggingGhost.element.remove()
-      this.element.style.display = "block"
+      this.dragged.element.style.display = "block"
       this.dragging = false
       this.isDraggedOverOriginalLocation = false
-      this.hoveredTreeChild = null
+      this.hoveredTreeChild.element = null
     }
   },
   mounted() {

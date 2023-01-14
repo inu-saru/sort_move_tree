@@ -118,7 +118,8 @@ export default {
     mouseMove(event){
       if(this.dragging){
         if(this.placeHolder.isFirst){
-          this.createPlaceHolder()
+          this.setPlaceHolder(this.dragged.element.dataset.hierarchy)
+          this.dragged.element.parentNode.insertBefore(this.placeHolder.element, this.dragged.element.nextSibling)
           this.createDraggingGhost()
           this.dragged.element.style.display = "none"
           this.placeHolder.isFirst = false;
@@ -163,14 +164,11 @@ export default {
           this.aboveNode.element = aboveNode
 
           this.placeHolder.element.remove()
-          this.placeHolder.element = document.createElement("li")
-          this.placeHolder.element.classList.add("place-holder")
-          this.placeHolder.element.textContent = "▶︎"
           if (belowNode == undefined || this.aboveNode.element && this.belowNode.element && this.aboveNode.element.dataset.hierarchy > this.belowNode.element.dataset.hierarchy && this.belowNode.element.parentNode != this.hoveredTreeChild.element) {
-            this.placeHolder.element.style.textIndent = (this.hoveredTreeChild.element.dataset.hierarchy * 16) + "px"
+            this.setPlaceHolder(this.hoveredTreeChild.element.dataset.hierarchy)
             this.hoveredTreeChild.element.appendChild(this.placeHolder.element)
           } else {
-            this.placeHolder.element.style.textIndent = (belowNode.dataset.hierarchy * 16) + "px"
+            this.setPlaceHolder(belowNode.dataset.hierarchy)
             belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
           }        
           if(this.isInsideElement(this.placeHolder.element, event)){
@@ -179,12 +177,11 @@ export default {
         }
       }
     },
-    createPlaceHolder() {
+    setPlaceHolder(hierarchy) {
       this.placeHolder.element = document.createElement("li")
       this.placeHolder.element.classList.add("place-holder")
       this.placeHolder.element.appendChild(document.createTextNode("▶︎"))
-      this.placeHolder.element.style.textIndent = (this.dragged.element.dataset.hierarchy * 16) + "px"
-      this.dragged.element.parentNode.insertBefore(this.placeHolder.element, this.dragged.element.nextSibling)
+      this.placeHolder.element.style.textIndent = (hierarchy * 16) + "px"   
     },
     createDraggingGhost() {
       this.draggingGhost.element = document.createElement("li")

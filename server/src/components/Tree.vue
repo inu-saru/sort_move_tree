@@ -117,70 +117,10 @@ export default {
         }
         this.moveDraggingGhost(event)
       }
-      this.hoveringOnTree(event)      
-
-      // sort
+      this.hoveringOnTree(event)       
+          
       if(this.isDraggedOverOriginalLocation) {
-        const treeChildren = Array.from(document.querySelectorAll('.treeChild')).filter(treeChild => treeChild.getBoundingClientRect().height > 0)
-        const hoveredTreeChild = treeChildren.reduce((shallowestTreeChild, treeChild) => {
-          const treeChildLocation = treeChild.getBoundingClientRect()
-          const depth = treeChildLocation.height
-          if(shallowestTreeChild){
-            if((treeChildLocation.top <= event.pageY && event.pageY <= treeChildLocation.bottom) && depth < shallowestTreeChild.depth ) {
-              return {
-                depth: depth,
-                element: treeChild
-              } 
-            } else {
-              return shallowestTreeChild
-            }
-          } else {
-            return treeChild
-          }
-        }, { depth: Number.POSITIVE_INFINITY, element: treeChildren[0] }).element
-
-        const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
-        if(sortableNodes && this.dragging && hoveredTreeChild) {
-          const belowNode = sortableNodes.reduce((closestNode, sortableNode) => {
-            const nodeLocation = sortableNode.getBoundingClientRect()
-            const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
-            const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
-            if(offsetY < 0 && offsetY > closestNode.offsetY) {
-              return {
-                offsetY: offsetY,
-                element: sortableNode
-              }
-            } else {
-              return closestNode
-            }
-          }, { offsetY: Number.NEGATIVE_INFINITY }).element
-
-          const aboveNode = sortableNodes.reduce((closestNode, sortableNode) => {
-            const nodeLocation = sortableNode.getBoundingClientRect()
-            const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
-            const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
-            if(offsetY >= 0 && offsetY < closestNode.offsetY) {
-              return {
-                offsetY: offsetY,
-                element: sortableNode
-              }
-            } else {
-              return closestNode
-            }
-          }, { offsetY: Number.POSITIVE_INFINITY }).element
-
-          this.placeHolder.element.remove()
-          if (belowNode == undefined || aboveNode && belowNode && aboveNode.dataset.hierarchy > belowNode.dataset.hierarchy && belowNode.parentNode != hoveredTreeChild) {
-            this.setPlaceHolder(hoveredTreeChild.dataset.hierarchy)
-            hoveredTreeChild.appendChild(this.placeHolder.element)
-          } else {
-            this.setPlaceHolder(belowNode.dataset.hierarchy)
-            belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
-          }        
-          if(this.isInsideElement(this.placeHolder.element, event)){
-            this.placeHolder.element.classList.add("hoveredPlaceHolder")
-          }
-        }
+        this.sortPlaceHolder(event)
       }
     },
     setPlaceHolder(hierarchy) {
@@ -230,6 +170,75 @@ export default {
     isInsideElement(element, event) {
       const elementLocation = element.getBoundingClientRect()
       return (elementLocation.top <= event.pageY && event.pageY <= elementLocation.bottom) && (elementLocation.left <= event.pageX && event.pageX <= elementLocation.right)
+    },
+    sortPlaceHolder(event) {
+      const hoveredTreeChild = this.getHoverdTreeChild(event)
+      const sortableNodes = Array.from(document.querySelectorAll('.node')).filter(node => node.style.display !== "none")
+      if(sortableNodes && this.dragging && hoveredTreeChild) {
+        const belowNode = this.getBelowNode(sortableNodes, event)
+        const aboveNode = this.getAboveNode(sortableNodes, event)
+
+        this.placeHolder.element.remove()
+        if (belowNode == undefined || aboveNode && belowNode && aboveNode.dataset.hierarchy > belowNode.dataset.hierarchy && belowNode.parentNode != hoveredTreeChild) {
+          this.setPlaceHolder(hoveredTreeChild.dataset.hierarchy)
+          hoveredTreeChild.appendChild(this.placeHolder.element)
+        } else {
+          this.setPlaceHolder(belowNode.dataset.hierarchy)
+          belowNode.parentNode.insertBefore(this.placeHolder.element, belowNode)
+        }        
+        if(this.isInsideElement(this.placeHolder.element, event)){
+          this.placeHolder.element.classList.add("hoveredPlaceHolder")
+        }
+      }
+    },
+    getHoverdTreeChild(event) {
+      const treeChildren = Array.from(document.querySelectorAll('.treeChild')).filter(treeChild => treeChild.getBoundingClientRect().height > 0)
+      return treeChildren.reduce((shallowestTreeChild, treeChild) => {
+        const treeChildLocation = treeChild.getBoundingClientRect()
+        const depth = treeChildLocation.height
+        if(shallowestTreeChild){
+          if((treeChildLocation.top <= event.pageY && event.pageY <= treeChildLocation.bottom) && depth < shallowestTreeChild.depth ) {
+            return {
+              depth: depth,
+              element: treeChild
+            } 
+          } else {
+            return shallowestTreeChild
+          }
+        } else {
+          return treeChild
+        }
+      }, { depth: Number.POSITIVE_INFINITY, element: treeChildren[0] }).element
+    },
+    getBelowNode(sortableNodes, event) {
+      return sortableNodes.reduce((closestNode, sortableNode) => {
+        const nodeLocation = sortableNode.getBoundingClientRect()
+        const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+        const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+        if(offsetY < 0 && offsetY > closestNode.offsetY) {
+          return {
+            offsetY: offsetY,
+            element: sortableNode
+          }
+        } else {
+          return closestNode
+        }
+      }, { offsetY: Number.NEGATIVE_INFINITY }).element
+    },
+    getAboveNode(sortableNodes, event) {
+      return sortableNodes.reduce((closestNode, sortableNode) => {
+        const nodeLocation = sortableNode.getBoundingClientRect()
+        const nodeLabelLocation = sortableNode.querySelector('a').getBoundingClientRect()
+        const offsetY = event.pageY - (nodeLocation.top + nodeLabelLocation.height / 2)
+        if(offsetY >= 0 && offsetY < closestNode.offsetY) {
+          return {
+            offsetY: offsetY,
+            element: sortableNode
+          }
+        } else {
+          return closestNode
+        }
+      }, { offsetY: Number.POSITIVE_INFINITY }).element
     },
     mouseUp() {
       this.placeHolder.element.remove()
